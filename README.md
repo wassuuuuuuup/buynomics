@@ -2,7 +2,7 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-##Developer notes
+## Developer notes
 I used [Create React App](https://github.com/facebook/create-react-app) just to save a time. Usually I prefer to set up custom webpack build.
 
 I used `material-ui` to make everything look better and save a time with styling.
