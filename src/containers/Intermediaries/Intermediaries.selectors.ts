@@ -1,6 +1,8 @@
 import {createSelector} from '@reduxjs/toolkit';
+import sortBy from 'lodash/sortBy';
 
 import {RootState} from '../../store';
+const sortIntermediariesByField = 'order';
 
 const intermediariesSelectors = (state: RootState) => state.intermediaries;
 
@@ -11,5 +13,5 @@ export const intermediariesLoadingSelector = createSelector(
 
 export const intermediariesEntitiesSelector = createSelector(
 	intermediariesSelectors,
-	(intermediaries) => intermediaries.entities,
+	(intermediaries) => sortBy(intermediaries.entities, sortIntermediariesByField),
 );

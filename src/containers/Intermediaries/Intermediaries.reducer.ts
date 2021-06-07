@@ -1,10 +1,8 @@
 import {createSlice} from '@reduxjs/toolkit';
-import sortBy from 'lodash/sortBy';
 
 import {deleteIntermediary, fetchIntermediaries, createIntermediary} from './Intermediaries.thunk';
 import {Intermediary} from './Intermediaries.types';
-
-const sortIntermediariesByField = 'order';
+import {updateIntermediaryDetails} from '../IntermediaryDetails/IntermediateDetails.thunk';
 
 interface IntermediariesState {
 	loading: boolean;
@@ -30,11 +28,9 @@ export const intermediariesSlice = createSlice({
 			})
 			.addCase(fetchIntermediaries.fulfilled, (state, action): void => {
 				state.loading = false;
-				const realEntities = state.entities.slice().filter((entity) => !entity.fake);
-				state.entities = [
-					...sortBy(action.payload, sortIntermediariesByField),
-					...realEntities
-				] as Intermediary[];
+				if (!state.entities.length) {
+					state.entities = action.payload as Intermediary[];
+				}
 			})
 			.addCase(deleteIntermediary.pending, (state) => {
 				state.loading = true;
@@ -59,6 +55,12 @@ export const intermediariesSlice = createSlice({
 					createdAt: +Date.now()
 				};
 				state.entities = [...state.entities, newIntermediary];
+			})
+			.addCase(updateIntermediaryDetails.fulfilled, (state, action) => {
+				const index = state.entities.findIndex((entity) => entity.id === action.payload.id);
+				const entities = state.entities.slice();
+				entities.splice(index, 1, action.payload);
+				state.entities = entities;
 			});
 	}
 });

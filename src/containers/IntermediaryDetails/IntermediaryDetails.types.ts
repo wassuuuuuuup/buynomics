@@ -1,14 +1,9 @@
-import {IntermediaryType} from '../Intermediaries/Intermediaries.types';
-
-export interface RangeState {
-	to: number;
-	from: number;
-	step: number;
-}
+import {DropdownItem, IntermediaryType, RangeState} from '../Intermediaries/Intermediaries.types';
 
 export interface CreateIntermediaryRequestData {
 	name: string;
 	type: IntermediaryType;
 	order: number;
 	range?: RangeState;
+	dropdown?: DropdownItem[];
 }

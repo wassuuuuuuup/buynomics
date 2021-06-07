@@ -30,7 +30,7 @@ export const intermediateDetailsSlice = createSlice({
 			})
 			.addCase(updateIntermediaryDetails.fulfilled, (state, action) => {
 				state.loading = false;
-				state.entity = action.payload;
+				state.entity = {...action.payload};
 			});
 	}
 });

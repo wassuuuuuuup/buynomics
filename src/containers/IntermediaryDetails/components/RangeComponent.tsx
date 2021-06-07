@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 
-import {RangeState} from '../IntermediaryDetails.types';
+import {RangeState} from '../../Intermediaries/Intermediaries.types';
 import {countDecimals} from '../../../utils/numberUtils';
 import {MAX_DECIMALS_COUNT} from '../../../common/constants';
 

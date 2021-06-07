@@ -16,13 +16,13 @@ import isEqual from 'lodash/isEqual';
 import {INTERMEDIARY_TYPE_LABEL} from '../Intermediaries/Intermadiaries.constants';
 import {fetchIntermediaryDetails, updateIntermediaryDetails} from './IntermediateDetails.thunk';
 import {intermediaryDetailsLoadingSelector} from './IntermediaryDetails.selectors';
-import {Intermediary, IntermediaryType} from '../Intermediaries/Intermediaries.types';
+import {DropdownItem, Intermediary, IntermediaryType} from '../Intermediaries/Intermediaries.types';
 import {ROUTES} from '../../common/constants';
 import {commonClasses} from '../../common/classes';
 import {NAME_INPUT_MAX_LENGTH} from './IntermediaryDetails.constants';
 import RangeComponent from './components/RangeComponent';
 import DropdownComponent from './components/DropdownComponent';
-import {RangeState} from './IntermediaryDetails.types';
+import {RangeState} from '../Intermediaries/Intermediaries.types';
 import {createIntermediary} from '../Intermediaries/Intermediaries.thunk';
 import {useIntermediaryById} from './IntermediaryDetails.hooks';
 import {intermediariesEntitiesSelector} from '../Intermediaries/Intermediaries.selectors';
@@ -42,24 +42,29 @@ function IntermediaryDetails(): JSX.Element {
 	const history = useHistory();
 	const dispatch = useDispatch();
 	const details: Intermediary | undefined = useIntermediaryById(match.params.id);
-	const intermediariesLength: number = useSelector(intermediariesEntitiesSelector).length;
+	const nextOrderNumber: string = (useSelector(intermediariesEntitiesSelector).length + 1).toString();
 	const loading = useSelector(intermediaryDetailsLoadingSelector);
 	const [type, setType] = useState(IntermediaryType.NONE);
 	const [name, setName] = useState<string>('');
-	const [order, setOrder] = useState<number>(intermediariesLength);
+	const [order, setOrder] = useState<string>(nextOrderNumber);
 	const [range, setRange] = useState<RangeState | undefined>({to: 0, from: 0, step: 0});
+	const [dropdown, setDropdown] = useState<DropdownItem[] | undefined>([]);
 	const [isRangeValid, setIsRangeValid] = useState(false);
 	const createMode = match.params.id === 'new';
 
 	const onTextInputChange = useCallback(({target: {value, name}}) => {
 		switch (+name) {
 		case TextInputs.NAME: return setName(value);
-		case TextInputs.ORDER: return setOrder(+value);
+		case TextInputs.ORDER: return setOrder(value);
 		}
 	}, []);
 
 	const onRangeChange = useCallback((data: RangeState) => {
 		setRange(data);
+	}, []);
+
+	const onDropdownChange = useCallback((data: DropdownItem[]) => {
+		setDropdown(data);
 	}, []);
 
 	const handleTypeChange = useCallback((event: React.ChangeEvent<{ value: unknown }>) =>
@@ -77,15 +82,15 @@ function IntermediaryDetails(): JSX.Element {
 				id: details.id,
 				name,
 				type,
-				order,
+				order: +order,
 				range,
 				createdAt: details.createdAt,
 			}));
 		} else {
-			dispatch(createIntermediary({name, type, order, range}));
+			dispatch(createIntermediary({name, type, order: +order, range, dropdown}));
 			history.push(ROUTES.ITERMEDIARIES);
 		}
-	}, [details, name, type, order, range]);
+	}, [details, name, type, order, range, dropdown]);
 
 	useEffect(() => {
 		if (match && match.isExact && match.params.id && !createMode) {
@@ -97,21 +102,23 @@ function IntermediaryDetails(): JSX.Element {
 		if (details && !createMode) {
 			setName(details.name);
 			setType(details.type);
-			setOrder(details.order);
+			setOrder(details.order.toString());
 			setRange(details?.range);
+			setDropdown(details?.dropdown);
 		}
 	}, [details]);
 
 	const isSaveEnabled = details ? (
 		(name && name !== details.name) ||
-		(order && order !== details.order) ||
+		(order && +order !== details.order) ||
 		(type && type !== details.type) ||
 		(
 			details.range &&
 			!isEqual(range, details.range) &&
 			details.range.from > (range ? range.from : 0)  &&
-			isRangeValid)
-	) : isRangeValid;
+			isRangeValid
+		)
+	) : isRangeValid || dropdown?.length;
 
 	return (
 		<Container maxWidth="md" component={Paper} className={classes.container}>
@@ -177,7 +184,12 @@ function IntermediaryDetails(): JSX.Element {
 						initialRange={details?.range}
 					/>
 				)}
-				{+type === IntermediaryType.DROPDOWN && (<DropdownComponent />)}
+				{+type === IntermediaryType.DROPDOWN && (
+					<DropdownComponent
+						options={dropdown}
+						onChange={onDropdownChange}
+					/>
+				)}
 				<Grid item container direction="row" spacing={2}>
 					<Grid item>
 						<Button
