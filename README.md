@@ -2,6 +2,23 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+##Developer notes
+I used [Create React App](https://github.com/facebook/create-react-app) just to save a time. Usually I prefer to set up custom webpack build.
+
+I used `material-ui` to make everything look better and save a time with styling.
+
+I used `@reduxjs/toolkit` as basic tool for managing redux state.
+Redux thunk is supposed to be used for handling side effects.
+
+Implemented only intermediaries and intermediary details pages. The rest ones are pretty similar.
+
+I wrote tests for reducer, selectors and one of the components. Tests for thunk don't make any sence cause they are dummy async functions that returns stubs.
+Tests for other reducer/selectors/components will look similar.
+
+One important thing that have missed due to lack of time is to test validation logic for `RangeComponent`. This test will simply check if entered values conforms the formula `(initialFromValue - currentFromValue) / currentStepValue % 1 === 0`
+
+Total time: 5-6h
+
 ## Available Scripts
 
 In the project directory, you can run:

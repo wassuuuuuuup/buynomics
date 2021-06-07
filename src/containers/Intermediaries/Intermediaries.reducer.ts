@@ -20,6 +20,8 @@ export const intermediariesSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder
+			// Redux Toolkit's createSlice API uses Immer internally automatically.
+			// So, it's already safe to "mutate" state inside of any case reducer function that is passed to createReducer
 			.addCase(fetchIntermediaries.pending, (state) => {
 				state.loading = true;
 			})
