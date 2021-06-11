@@ -19,6 +19,10 @@ One important thing that have missed due to lack of time is to test validation l
 
 Total time: 5-6h
 
+### UPD 11.06.2021
+Floating numbers calculation precision errors of intermediaries range validation were fixed by using `Big.js` library. The idea is to use it for all the math and comparisons of floating numbers.
+Added some tests for the intermediaries range validation.
+
 ## Available Scripts
 
 In the project directory, you can run:

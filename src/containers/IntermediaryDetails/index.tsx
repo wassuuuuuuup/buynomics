@@ -12,6 +12,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import {useHistory, useRouteMatch} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import isEqual from 'lodash/isEqual';
+import Big from 'big.js';
 
 import {INTERMEDIARY_TYPE_LABEL} from '../Intermediaries/Intermadiaries.constants';
 import {fetchIntermediaryDetails, updateIntermediaryDetails} from './IntermediateDetails.thunk';
@@ -76,7 +77,7 @@ function IntermediaryDetails(): JSX.Element {
 		history.push(ROUTES.ITERMEDIARIES);
 	}, []);
 
-	const onSave = useCallback(async () => {
+	const onSave = useCallback(() => {
 		if (details && !createMode) {
 			dispatch(updateIntermediaryDetails({
 				id: details.id,
@@ -115,7 +116,7 @@ function IntermediaryDetails(): JSX.Element {
 		(
 			details.range &&
 			!isEqual(range, details.range) &&
-			details.range.from > (range ? range.from : 0)  &&
+			Big(details.range.from).gt(range ? range.from : 0)  &&
 			isRangeValid
 		)
 	) : isRangeValid || dropdown?.length;

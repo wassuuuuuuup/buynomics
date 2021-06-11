@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import {RangeState} from '../../Intermediaries/Intermediaries.types';
 import {countDecimals} from '../../../utils/numberUtils';
 import {MAX_DECIMALS_COUNT} from '../../../common/constants';
+import {isIntermediaryRangeValid} from '../../../utils/formValidation';
 
 interface RangeProps {
 	range?: RangeState;
@@ -20,39 +21,28 @@ function RangeComponent({range, initialRange, onChange, toggleValid}: RangeProps
 
 	const onFromChange = useCallback((e) => {
 		let value = e.target.value;
-		if (countDecimals(+e.target.value) >= MAX_DECIMALS_COUNT) {
+		if (countDecimals(e.target.value) >= MAX_DECIMALS_COUNT) {
 			value = parseFloat(value).toFixed(MAX_DECIMALS_COUNT);
 		}
 		setFrom(value);
 	}, []);
 	const onToChange = useCallback((e) => {
 		let value = e.target.value;
-		if (countDecimals(+e.target.value) >= MAX_DECIMALS_COUNT) {
+		if (countDecimals(e.target.value) >= MAX_DECIMALS_COUNT) {
 			value = parseFloat(value).toFixed(MAX_DECIMALS_COUNT);
 		}
 		setTo(value);
 	}, []);
 	const onStepChange = useCallback((e) => {
 		let value = e.target.value;
-		if (countDecimals(+e.target.value) >= MAX_DECIMALS_COUNT) {
+		if (countDecimals(e.target.value) >= MAX_DECIMALS_COUNT) {
 			value = parseFloat(value).toFixed(MAX_DECIMALS_COUNT);
 		}
 		setStep(value);
 	}, [step]);
 
 	useEffect(() => {
-		toggleValid(
-			// all fields should be filled
-			Boolean(from && to && step) &&
-			// "from" field value should be less that "to"
-			parseFloat(from) < parseFloat(to) &&
-			// step sould be positive number
-			parseFloat(step) > 0 &&
-			// should be constrained to formula
-			initialRange?.from ?
-				(parseFloat(String(initialRange.from)) - parseFloat(from)) / parseFloat(step) % 1 === 0 :
-				(parseFloat(to) - parseFloat(from)) / parseFloat(step) % 1 === 0
-		);
+		toggleValid(isIntermediaryRangeValid(initialRange?.from || to, from, step));
 	}, [from, to, step]);
 
 	useEffect(() => {
